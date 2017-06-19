@@ -235,10 +235,6 @@ class Strawpoll_Multivote:
 
             list = ''
             for source in proxy_source:
-                if source[2] == 'socks4/5':
-                    proxy_to = 'socks5h'
-                else:
-                    proxy_to = source[2].lower()
                 if source:
                     list += source[0] + ':' + source[1] + '\n'
 
