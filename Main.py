@@ -45,7 +45,7 @@ class Strawpoll_Multivote:
                         print("[!] Times to vote not defined with: -v ")
                         exit(1)
                     if options.survey is None:
-                        print("[!] Url id ofthe survey defined with: -s")
+                        print("[!] Url id of the survey defined with: -s")
                         exit(1)
                     if options.target is None:
                         print("[!] Target checkbox to vote for is not defined with: -t")
