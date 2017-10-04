@@ -70,9 +70,9 @@ class Strawpoll_Multivote:
                     if options.renew == True:
                         renewlist=self.renewProxyList();
                         os.remove(self.proxyListFile)
-                    with open(self.proxyListFile, "a") as myfile:
-                        for i in renewlist:
-                            myfile.write(i)
+                        with open(self.proxyListFile, "a") as myfile:
+                            for i in renewlist:
+                                myfile.write(i)
 
             # Print help
             else:
