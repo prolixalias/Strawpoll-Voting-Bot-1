@@ -44,7 +44,7 @@ you can do so by opening the proxies.txt with a text editor (Notepad+, Textpad e
 ```
 
 # How do I get the survey id and the target ?
-The survey id is always in the url pointing to the desired survey.If the url is https://strawpoll.com/366ggz3 then abbcw17 would be the id
+The survey id is always in the url pointing to the desired survey.If the url is https://strawpoll.com/366ggz3 then 366ggz3 would be the id
 and the domain would either be left blank(automatically is set to "com") or could be manually set to "com".
 To find the desired target the user must right click the checkbox you want to vote for, then go to inspect element and search for a
 value with 'check' that represents the checkbox. For example: check4963932. The targeted checkbox can also be found through the page's source code.
