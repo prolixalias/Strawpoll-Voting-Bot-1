@@ -3,9 +3,10 @@ try:
     from optparse import OptionParser
     import sys
     import os
-    import requests
     import re
-
+    from bs4 import BeautifulSoup
+    import urllib.request
+    import requests
 except ImportError as msg:
     print("[!] Library not installed: " + str(msg))
     exit()
@@ -137,7 +138,7 @@ class Strawpoll_Multivote:
 
             # Check if max votes has been reached
             if self.successfulVotes >= self.maxVotes:
-                print("[*] Finished voting: " + str(self.successfulVotes)) + ' times.'
+                print("[*] Finished voting: " + str(self.successfulVotes) + ' times.')
             else:
                 print("[*] Finished every proxy in the list.")
 
@@ -212,33 +213,14 @@ class Strawpoll_Multivote:
     # Renew Proxy List
     def renewProxyList(self):
         final_list=[]
-        for i in range(1, 3):
-            r = requests.get('http://proxylist.hidemyass.com/' + str(i))
-            fix1 = "("
-            for line in r.text.splitlines():
-                class_name = re.search(r'\.([a-zA-Z0-9_\-]{4})\{display:none\}', line)
-                if class_name is not None:
-                    fix1 += class_name.group(1) + '|'
-
-            fix1 = fix1.rstrip('|')
-            fix1 += ')'
-
-            fix3 = '(<span class\="' + fix1 + '">[0-9]{1,3}</span>|<span style=\"display:(none|inline)\">[0-9]{1,3}</span>|<div style="display:none">[0-9]{1,3}</div>|<span class="[a-zA-Z0-9_\-]{1,4}">|</?span>|<span style="display: inline">)'
-
-            fix2 = re.compile(fix3, flags=re.M)
-            fix2 = fix2.sub('', r.text)
-            fix2 = fix2.replace("\n", "")
-
-            proxy_source = re.findall(
-                '([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s*</td>\s*<td>\s*([0-9]{2,6}).{100,1200}(socks4/5|HTTPS?)',
-                fix2)
-
-            list = ''
-            for source in proxy_source:
-                if source:
-                    list += source[0] + ':' + source[1] + '\n'
-
-            final_list.append(list)
+        url = "http://proxy-daily.com/"
+        content = urllib.request.urlopen(url).read()
+        soup = BeautifulSoup(content,features="html5lib")
+        center = soup.find_all("center")[0]
+        div = center.findChildren("div", recursive=False)[0].getText();
+        children= div.splitlines()
+        for child in children:
+            final_list.append(child+"\n")
         return (final_list)
 # Execute strawpoll_multivote
 Strawpoll_Multivote()
