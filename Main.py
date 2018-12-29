@@ -7,6 +7,10 @@ try:
     from bs4 import BeautifulSoup
     import urllib.request
     import requests
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
 except ImportError as msg:
     print("[!] Library not installed: " + str(msg))
     exit()
@@ -67,7 +71,7 @@ class Strawpoll_Multivote:
                         open(self.saveStateFile, 'w+')
                     # Alter domain if not None.
                     if options.domain is not None:
-                        domainEnd = options.domain
+                        self.domainEnd = options.domain
                     if options.renew == True:
                         renewlist=self.renewProxyList();
                         os.remove(self.proxyListFile)
@@ -130,8 +134,8 @@ class Strawpoll_Multivote:
                 print("[#] Connecting... ")
 
                 # Connect to strawpoll and send vote
-                self.sendToWeb('https://' + proxy)
-
+                # self.sendToWeb('http://' + proxy,'https://' + proxy)
+                self.webdriverManipulation(proxy);
                 # Write used proxy into saveState.xml
                 self.writeUsedProxy(proxy)
                 print()
@@ -169,7 +173,43 @@ class Strawpoll_Multivote:
         requestString = str(request.text)
         return requestString
 
-    def sendToWeb(self, httpsProxy):
+	# Using selenium and chromedriver to run the voting process on the background
+    def webdriverManipulation(self,Proxy):
+        try:
+            WINDOW_SIZE = "1920,1080"
+
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--window-size=%s" % WINDOW_SIZE)
+            chrome_options.add_argument('--proxy-server=%s' % Proxy)
+            prefs = {"profile.managed_default_content_settings.images": 2}
+            chrome_options.add_experimental_option("prefs", prefs)
+            chrome = webdriver.Chrome(options=chrome_options)
+
+            if self.domainEnd == "me":
+                chrome.get('https://www.strawpoll.' + self.domainEnd + '/' + self.surveyId)
+                element = chrome.find_element_by_xpath('//*[@value="'+ self.voteFor +'"]')
+                webdriver.ActionChains(chrome).move_to_element(element).click(element).perform()
+                submit_button = chrome.find_elements_by_xpath('//*[@type="submit"]')[0]
+                submit_button.click()
+            else:
+                chrome.get('https://strawpoll.' + self.domainEnd + '/' + self.surveyId)
+                element = chrome.find_element_by_xpath('//*[@name="'+ self.voteFor +'"]')
+                webdriver.ActionChains(chrome).move_to_element(element).click(element).perform()
+                submit_button = chrome.find_elements_by_xpath('//*[@id="votebutton"]')[0]
+                submit_button.click()
+
+            chrome.quit()
+            print("[*] Successfully voted.")
+            self.successfulVotes += 1
+            return True
+        except Exception as exception:
+            print("[!] Voting failed for the specific proxy.")
+            chrome.quit()
+            return False
+
+    # Posting through requests (previous version)
+    def sendToWeb(self,httpProxy, httpsProxy):
         try:
             headers = \
                 {
@@ -188,9 +228,9 @@ class Strawpoll_Multivote:
                     'Connection': 'close'
                 }
             payload = {'pid': self.surveyId, 'oids': self.voteFor}
-            proxyDictionary = {"https": httpsProxy}
+            proxyDictionary = {"http": httpProxy,"https": httpsProxy}
             # Connect to server
-            r = requests.post('https://strawpoll.' + self.domainEnd + '/vote', data=payload, headers=headers, proxies=proxyDictionary, timeout=self.proxyTimeout)
+            r = requests.post('https://strawpoll.' + self.domainEnd + '/vote', data=payload, headers=headers)
             json = r.json()
             # Check if the vote was successful
             if(bool(json['success'])):
