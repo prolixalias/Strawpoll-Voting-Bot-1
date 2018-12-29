@@ -32,19 +32,20 @@ python Main.py -v  20 -s 366ggz3 -t check4963932 -f -r
 ```
 
 # How to install it ?
-You can either download the zip or clone it with git then install the required library if it not install yet in your operating system with:
+You can either download the zip or clone it with git then install the required libraries if they are not yet installed in your operating system with:
 ```
 pip install requests
-
+pip install selenium
+pip install beautifulsoup4
 ```
+Remember to install the chromedriver and put it in the folder where you are running Main.py: http://chromedriver.chromium.org/downloads
 
 # How to add proxies to the list
 In order to change the proxy list through the program you can add the -r in the command line. If you want to manually add proxies
 you can do so by opening the proxies.txt with a text editor (Notepad+, Textpad etc.) and add a new proxy per new line
-```
 
 # How do I get the survey id and the target ?
 The survey id is always in the url pointing to the desired survey.If the url is https://strawpoll.com/366ggz3 then 366ggz3 would be the id
 and the domain would either be left blank(automatically is set to "com") or could be manually set to "com".
 To find the desired target the user must right click the checkbox you want to vote for, then go to inspect element and search for a
-value with 'check' that represents the checkbox. For example: check4963932. The targeted checkbox can also be found through the page's source code.
+value with 'check' that represents the checkbox. For example: check4963932. The targeted checkbox can also be found through the page's source code. For the strawpoll.me polls instead of the name of the input, the value should be used.
