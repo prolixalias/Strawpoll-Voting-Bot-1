@@ -1,3 +1,4 @@
+
 # Usage: Main.py [options]
 #
 # Options:
@@ -10,6 +11,25 @@
 #  Example:
 #    python3 Main.py -e electorate.json -s 5c8fe5b2415047923ca8bb63 -t 5c8fe63f6072beaf0cb05040 -f -r
 #
+
+
+
+####
+#
+# (0) Populate list of proxies
+# (1) Read list of all voters
+# (2) Read list of all proxies
+# (3) Read list of polls
+# (4) Loop - while true
+# (5)   Set timestamp for now
+# (6)   Loop - over all voters
+# (6.1)   If voter not in polls OR if in polls AND timestamp - lastVote > 24 hours
+# (6.2)     add to line at polls
+# (6.3)   Else skip this voter
+# (6.4) End loop 6 
+# (7) Loop - over line at polls
+# (7.1)   dd
+####
 
 
 
